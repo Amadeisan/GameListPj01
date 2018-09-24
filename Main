@@ -1,0 +1,144 @@
+import javafx.application.Application;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.geometry.Insets;
+import javafx.scene.Scene;
+
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
+
+
+
+public class Main extends Application {
+
+    TableView<GameListBuilder> tableView;
+    TextField nameInput, yearInput, platformInput, genreInput;
+
+
+    public static void main(String[] args) {
+        launch(args);
+    }
+
+
+    @Override
+    public void start(Stage primaryStage) throws Exception {
+        primaryStage.setTitle("GameList");
+
+        //Name Column
+        TableColumn<GameListBuilder, String> nameColumn = new TableColumn<>("Name");
+        nameColumn.setMinWidth(200);
+        nameColumn.setCellValueFactory(new PropertyValueFactory<>("name"));
+
+        //Year Column
+        TableColumn<GameListBuilder, String> yearColumn = new TableColumn<>("Year");
+        yearColumn.setMinWidth(50);
+        yearColumn.setCellValueFactory(new PropertyValueFactory<>("year"));
+
+        //Platform Column
+        TableColumn<GameListBuilder, String> platformColumn = new TableColumn<>("Platform");
+        platformColumn.setMinWidth(100);
+        platformColumn.setCellValueFactory(new PropertyValueFactory<>("platform"));
+
+        //Genre Column
+        TableColumn<GameListBuilder, String> genreColumn = new TableColumn<>("Gemre");
+        genreColumn.setMinWidth(200);
+        genreColumn.setCellValueFactory(new PropertyValueFactory<>("genre"));
+
+        //Name Input
+        nameInput = new TextField();
+        nameInput.setPromptText("Name");
+        nameInput.setMinWidth(150);
+
+        //Year Input
+        yearInput = new TextField();
+        yearInput.setPromptText("Year");
+        yearInput.setMinWidth(50);
+
+        //Platform Input
+        platformInput = new TextField();
+        platformInput.setPromptText("Platform");
+        platformInput.setMinWidth(100);
+
+        //Genre Input
+        genreInput = new TextField();
+        genreInput.setPromptText("Genre");
+        genreInput.setMinWidth(150);
+
+        //Button
+        Button addButton = new Button("Add");
+        addButton.setOnAction(e -> addButtonClicked());
+        Button deleteButton = new Button("Delete");
+        deleteButton.setOnAction(e -> deleteButtonClicked());
+
+        HBox hBox = new HBox();
+        hBox.setPadding(new Insets(10, 10, 10, 10));
+        hBox.setSpacing(10);
+        hBox.getChildren().addAll(nameInput, yearInput, platformInput, genreInput, addButton, deleteButton);
+
+
+        tableView = new TableView<>();
+        tableView.setItems(getGameListBuilder());
+        tableView.getColumns().addAll(nameColumn, yearColumn, platformColumn, genreColumn);
+
+
+
+
+        VBox vBox = new VBox();
+        vBox.getChildren().addAll(tableView, hBox);
+
+        Scene scene = new Scene(vBox);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+    }
+
+    //Button Clicked Actions
+    //Add button
+    public void addButtonClicked(){
+        GameListBuilder gameListBuilder = new GameListBuilder();
+        gameListBuilder.setName(nameInput.getText());
+        gameListBuilder.setYear(Integer.parseInt(yearInput.getText()));
+        gameListBuilder.setPlatform(platformInput.getText());
+        gameListBuilder.setGenre(genreInput.getText());
+        tableView.getItems().add(gameListBuilder);
+        nameInput.clear();
+        yearInput.clear();
+        platformInput.clear();
+        genreInput.clear();
+    }
+
+
+    //Delete Button Clicked
+    public void deleteButtonClicked(){
+        ObservableList<GameListBuilder> gameListBuildersSelected, gameListBuildersAll;
+        gameListBuildersAll = tableView.getItems();
+        gameListBuildersSelected = tableView.getSelectionModel().getSelectedItems();
+      //WORKING(relay on java 8)  //gameListBuildersSelected.forEach(gameListBuildersAll::remove);
+        gameListBuildersAll.removeAll(gameListBuildersSelected);
+    }
+
+
+
+
+    // getting GameListBuilder class
+    public  ObservableList<GameListBuilder> getGameListBuilder (){
+        ObservableList<GameListBuilder> gameListBuilders = FXCollections.observableArrayList();
+        gameListBuilders.add(new GameListBuilder("Half-Life 2", 2004, "PC", "Action, Shooter"));
+        gameListBuilders.add(new GameListBuilder("GRAND THEFT AUTO V", 2015, "PC, PS4, XBOX", "Action, Adventure"));
+        gameListBuilders.add(new GameListBuilder("BIOSHOCK", 2007, "PC, PS4, XBOX", "Action, Shooter"));
+        gameListBuilders.add(new GameListBuilder("THE ELDER SCROLLS V: SKYRIM", 2011, "PC, PS4, XBOX", "RPG"));
+        gameListBuilders.add(new GameListBuilder("THE WITCHER 3: WILD HUNT", 2015, "PC, PS4, XBOX", "Action, RPG"));
+        gameListBuilders.add(new GameListBuilder("MARVEL'S SPIDER-MAN", 2018, "PS4", "Action, Adventure"));
+        gameListBuilders.add(new GameListBuilder("THE LEGEND OF ZELDA", 2017, "Wii U", "Adventure"));
+        return gameListBuilders;
+    }
+
+
+}
